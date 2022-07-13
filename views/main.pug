@@ -1,0 +1,52 @@
+extends layout.pug 
+
+block content 
+    .card.text-center
+        .card-header
+            | Workspot Control Connection
+        .card-body
+            h5.card-title New Connection to Workspot Control
+            p.card-text Click the button and enter Workspot API credentials.
+            btn.btn.btn-primary(data-bs-toggle="modal", data-bs-target="#exampleModal") Get Token
+
+    
+    #connections.row.mt-3.g-3
+        each connection in connections 
+            .col-lg-6
+                .card.text-center
+                    .card-body
+                        h5.card-title Connection: #{connection.connectionName}
+                        p.card-text API Admin: #{connection.apiAdmin}
+                        a.btn.btn-outline-primary.mx-3(href='/workspot/dashboard', target='_blank') Dashboard
+                        button.btn.btn-outline-danger.mx-3(type='button', name=`${connection.connectionName}`) Delete Connection
+
+    
+    //- // obtain API credentials
+    form(action="/workspot/connection/add", method="post")
+        #exampleModal.modal.fade(tabindex='-1', aria-labelledby='exampleModalLabel', aria-hidden='true')
+            .modal-dialog.modal-dialog-centered
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel.modal-title Please enter API credentials
+                        button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                    .modal-body
+                            .form-floating.mb-3
+                                input#floatingInput.form-control(type='text', placeholder='Enter a company nickname', name="connectionName")
+                                label(for='floatingInput') Connection Name
+                            .form-floating.mb-3
+                                input#floatingInput.form-control(type='email', placeholder='name@example.com', name="apiAdmin")
+                                label(for='floatingInput') API Admin Account
+                            .form-floating.mb-3
+                                input#floatingPassword.form-control(type='password', placeholder='Password', name="apiAdminPassword")
+                                label(for='floatingPassword') Password
+                            .form-floating.mb-3
+                                input#floatingPassword.form-control(type='password', placeholder='Password', name="wsClientId")
+                                label(for='floatingPassword') Client ID
+                            .form-floating
+                                input#floatingPassword.form-control(type='password', placeholder='Password', name="wsClientSecret")
+                                label(for='floatingPassword') Client Secret
+                    .modal-footer
+                        button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Close
+                        button.btn.btn-primary(type='submit') Save changes
+
+    

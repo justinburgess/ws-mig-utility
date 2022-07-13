@@ -1,0 +1,25 @@
+{
+  "name": "ws-mig-utility",
+  "version": "1.0.0",
+  "description": "Administrative interface to interact with APIs to perform VM migrations and conversions.",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "author": "Justin M. Burgess",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "connect-mongo": "^4.6.0",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "mongoose": "^6.4.1",
+    "node-fetch": "^2.6.7",
+    "nodemon": "^2.0.18",
+    "passport": "^0.6.0",
+    "passport-http": "^0.3.0",
+    "passport-oauth2-client-password": "^0.1.2",
+    "pug": "^3.0.2",
+    "sass": "^1.53.0"
+  }
+}

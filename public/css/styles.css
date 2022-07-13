@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
+img.wslogo {
+  width: 150px;
+}
+
+img.profile {
+  width: 40px;
+}
+
+h1 {
+  color: #FFF;
+}
+
+/*# sourceMappingURL=styles.css.map */
