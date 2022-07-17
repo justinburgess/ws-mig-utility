@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
-const getWsToken = require('./middleware/get-token');
+const getToken = require('./middleware/get-token');
 
 const pug = require('pug');
 const app = express();
@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // incorporate custom workspot api functionality
-app.use(getWsToken);
+app.use(getToken);
 
 // set template engine to pug
 app.set('view engine', 'pug');

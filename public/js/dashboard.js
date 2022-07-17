@@ -5,7 +5,7 @@ async function getSelectedDesktops (poolName) {
     fetch('http://localhost:3000/workspot/dashboard/desktops', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:`poolName=${poolName}`,
+        body: JSON.stringify({'poolName': poolName}),
     })
         .then(res => {
         if (res.ok) return res.json()
@@ -23,6 +23,6 @@ poolTable.addEventListener('change', (event) => {
                             .parentElement
                             .nextElementSibling
                             .textContent;
-        return getSelectedDesktops(poolName);
+        getSelectedDesktops(poolName);
     }
 });

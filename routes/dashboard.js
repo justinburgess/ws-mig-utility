@@ -3,7 +3,8 @@ const router = express.Router();
 const fetch = require('node-fetch');
 const Connection = require('../models/Connection');
 const Pool = require('../models/Pool');
-const getWsToken = require('../middleware/get-token');
+const bodyParser = require('body-parser');
+const getToken = require('../middleware/get-token');
 
 
 // helper functions
@@ -48,7 +49,7 @@ router.get('/', async (req, res, next) => {
 
     // check token expiration, refresh token if so
     if (Date.now() > wsConnection.apiTokenRefreshTime) {
-        var token = await getWsToken(wsConnection.apiAdmin, wsConnection.apiAdminPassword, wsConnection.wsClientId, wsConnection.wsClientSecret);
+        var token = await getToken(wsConnection.apiAdmin, wsConnection.apiAdminPassword, wsConnection.wsClientId, wsConnection.wsClientSecret);
         var key = token.access_token;
         await Connection.updateOne({apiAccessToken: wsConnection.apiAccessToken},{$set: {apiAccessToken: key, apiTokenRefreshTime: new Date(Date.now() + 3600000)}});
         }

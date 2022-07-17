@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 
 // helper functions
-async function obtainToken(admin, password, clientId, clientSecret) {
+const getToken = async function (admin, password, clientId, clientSecret) {
     const clientPair = clientId + ':' + clientSecret;
     const basicAuth = "Basic " + new Buffer.from(clientPair).toString('base64');
     
@@ -27,4 +27,4 @@ async function obtainToken(admin, password, clientId, clientSecret) {
     return response;
 }
 
-module.exports = obtainToken;
+module.exports = getToken;

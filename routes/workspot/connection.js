@@ -3,7 +3,8 @@ const router = express.Router();
 const fetch = require('node-fetch');
 const Connection = require('../../models/Connection');
 const Pool = require('../../models/Pool');
-const getWsToken = require('../../middleware/get-token');
+const bodyParser = require('body-parser');
+const getToken = require('../../middleware/get-token');
 
 // auth with google
 router.post('/add', async (req, res, next) => {
@@ -25,8 +26,9 @@ router.delete('/delete', async (req, res, next) => {
 
 
 // helper functions
+
 async function createToken(req, res, next) {
-    const token = await getWsToken(req.body.apiAdmin,
+    const token = await getToken(req.body.apiAdmin,
         req.body.apiAdminPassword,
         req.body.wsClientId,
         req.body.wsClientSecret);
