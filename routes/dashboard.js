@@ -34,8 +34,12 @@ async function createPool(pools, connection) {
 }
 
 // pull available desktops based on poolId
-async function getDesktops(poolId){
+async function getDesktops(poolId, token){
     // fetch desktops with poolId
+    const desktops = await fetch(`https://api.workspot.com/v1.0/pools/${poolId}/desktops?access_token=${token}`)
+                            .then(res => res.json());
+    // return desktops;
+    return desktops;
 }
 
 
@@ -64,11 +68,13 @@ router.get('/', async (req, res, next) => {
 // pull desktops associated with poolName
 router.post('/desktops', async(req, res, next) => {
     // lookup poolId based on req.body.poolName
-        console.log(req.body.poolName);
-        // const poolId = Pool.findOne({connectionName: req.body.poolName});
+    const pool = await Pool.findOne({poolName: req.body.poolName});
+    // lookup api token
+    const connection = await Connection.findOne({connectionName: pool.connectionName})
     // use fetch api to get desktops with poolId
-        // getDesktops(poolId);
+    const desktops = await getDesktops(pool.poolId, connection.apiAccessToken);
     // populate desktop info into pug locals and render
+    // res.render('dashboard', {desktops: desktops.desktops});
 });
 
 // router.get('/public', (req, res, next) => {
