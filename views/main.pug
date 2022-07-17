@@ -17,7 +17,7 @@ block content
                     .card-body
                         h5.card-title Connection: #{connection.connectionName}
                         p.card-text API Admin: #{connection.apiAdmin}
-                        a.btn.btn-outline-primary.mx-3(href='/workspot/dashboard', target='_blank') Dashboard
+                        a.btn.btn-outline-primary.mx-3(href=`/workspot/dashboard?dashboard=${connection.connectionName}`, target='_blank') Dashboard
                         button.btn.btn-outline-danger.mx-3(type='button', name=`${connection.connectionName}`) Delete Connection
 
     
@@ -49,4 +49,4 @@ block content
                         button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Close
                         button.btn.btn-primary(type='submit') Save changes
 
-    
+    script(src='/js/main.js')

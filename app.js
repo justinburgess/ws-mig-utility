@@ -4,15 +4,19 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
+const getWsToken = require('./middleware/get-token');
 
 const pug = require('pug');
 const app = express();
 
+// create mongo store
 const mongoUrl = 'mongodb://localhost:27017/ws-migration';
 const store = new MongoStore({mongoUrl});
 
+// setup mongodb connection
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
+
 // mongo error
 db.on('error', console.error.bind(console, 'Connection error: '));
 
@@ -22,7 +26,7 @@ app.use(session({
     resave: true,
     saveUninitialized: false,
     store
-})
+    })
 );
 
 // parse incoming requests
@@ -32,17 +36,19 @@ app.use(bodyParser.urlencoded({extended: false}));
 // serve static files from /public
 app.use(express.static(path.join(__dirname, 'public')));
 
+// incorporate custom workspot api functionality
+app.use(getWsToken);
+
+// set template engine to pug
 app.set('view engine', 'pug');
 
-// include routes
+// load route instructions
 const routes = require('./routes');
-// const indexRoutes = require('./routes/index');
 const mainRoutes = require('./routes/main');
-const dashboardRoutes = require('./routes/workspot/dashboard');
+const dashboardRoutes = require('./routes/dashboard');
 const workspotConnections = require('./routes/workspot/connection');
 
-
-
+// route traffic based on instructions
 app.use(routes);
 app.use('/main', mainRoutes);
 app.use('/workspot/dashboard', dashboardRoutes);

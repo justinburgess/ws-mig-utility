@@ -1,7 +1,7 @@
-extends layout 
+extends layout.pug 
 
 block content
-    h2 Dashboard
+    h2.h2 Dashboard
     p #{username}
     ul#myTab.nav.nav-tabs(role='tablist')
         li.nav-item(role='presentation')
@@ -9,30 +9,33 @@ block content
         li.nav-item(role='presentation')
             button#profile-tab.nav-link(data-bs-toggle='tab' data-bs-target='#pool-tab-pane' type='button' role='tab' aria-controls='pool-tab-pane' aria-selected='false') Pools
         li.nav-item(role='presentation')
-            button#contact-tab.nav-link(data-bs-toggle='tab' data-bs-target='#contact-tab-pane' type='button' role='tab' aria-controls='contact-tab-pane' aria-selected='false') Contact
+            button#desktop-tab.nav-link(data-bs-toggle='tab' data-bs-target='#desktop-tab-pane' type='button' role='tab' aria-controls='desktop-tab-pane' aria-selected='false') Desktop
         li.nav-item(role='presentation')
             button#disabled-tab.nav-link(data-bs-toggle='tab' data-bs-target='#disabled-tab-pane' type='button' role='tab' aria-controls='disabled-tab-pane' aria-selected='false' disabled='') Disabled
     #myTabContent.tab-content
         #home-tab-pane.tab-pane.fade.show.active(role='tabpanel' aria-labelledby='home-tab' tabindex='0')
         #pool-tab-pane.tab-pane.fade(role='tabpanel' aria-labelledby='pool-tab' tabindex='0')
-            table.table
+            h3.h3.mt-3 Source Pools
+            table.table.table-striped#pool-table
                 each pool in desktopPools
                     thead
                         tr
                             th(scope='col') Select
-                            th(scope='col') Cloud
                             th(scope='col') Pool Name
                             th(scope='col') Template
                             th(scope='col') VM Type
+                            th(scope='col') Cloud
                     tbody
                         tr
                             th(scope='row')
                                 .form-check
-                                    input#flexCheckDefault.form-check-input(type='checkbox' value='')
-                                    label.form-check-label(for='flexCheckDefault')
-                            td #{pool.cloud}
+                                    input#flexCheckDefault.form-check-input.select-pool(type='checkbox' value='')
+                                    //- label.form-check-label(for='flexCheckDefault')                          
                             td #{pool.name}
                             td #{pool.template}
                             td #{pool.vmType}
-        #contact-tab-pane.tab-pane.fade(role='tabpanel' aria-labelledby='contact-tab' tabindex='0')
+                            td #{pool.cloud}
+        #desktop-tab-pane.tab-pane.fade(role='tabpanel' aria-labelledby='desktop-tab' tabindex='0')
         #disabled-tab-pane.tab-pane.fade(role='tabpanel' aria-labelledby='disabled-tab' tabindex='0')
+
+    script(src='/js/dashboard.js')
