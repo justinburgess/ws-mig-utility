@@ -3,6 +3,7 @@ const router = express.Router();
 const fetch = require('node-fetch');
 const Connection = require('../../models/Connection');
 const Pool = require('../../models/Pool');
+const Desktop = require('../../models/Desktop')
 const bodyParser = require('body-parser');
 const getToken = require('../../middleware/get-token');
 
@@ -20,6 +21,7 @@ router.post('/add', async (req, res, next) => {
 router.delete('/delete', async (req, res, next) => {
     await Connection.deleteOne({connectionName: req.body.name});
     await Pool.deleteOne({connectionName: req.body.name});
+    await Desktop.deleteMany({connectionName: req.body.name});
     res.redirect(301, '/main')
 });
 
@@ -36,7 +38,7 @@ async function createPool(token, connection) {
 
     // creating database object for each pool
     for (let i = 0; i < desktopPools.length; i++) {
-        if (!(await Pool.exists({poolId: desktopPools[i].id}))) {
+        if (!(await Pool.exists({connectionName: connection}))) {
             await Pool.create({
                 connectionName: connection,
                 poolName: desktopPools[i].name,
@@ -50,6 +52,33 @@ async function createPool(token, connection) {
             return
         }
     }
+}
+
+// store pool id and name info
+async function createDesktop(token, connection) {
+
+    // get pools associated with connection
+    const pools = await Pool.find({connectionName: connection})
+
+    // create desktop machines if does not exist with connection
+    for (let i = 0; i < pools.length; i++) {
+        const desktops = await wsGet(`https://api.workspot.com/v1.0/pools/${pools[i].poolId}/desktops?access_token=${token}`);
+        const allDesktops = desktops.desktops;
+        for (let j = 0; j < allDesktops.length; j++){
+            if (!(await Desktop.exists({connectionName: connection, name: allDesktops[i].name}))) {
+                await Desktop.create({
+                    connectionName: connection,
+                    name: allDesktops[i].name,
+                    email: allDesktops[i].email,
+                    poolName: allDesktops[i].poolName,
+                    status: allDesktops[i].status,
+                    id: allDesktops[i].id,
+                    poolId: allDesktops[i].poolId,
+                });
+            }
+        }
+    }
+    return                      
 }
 
 
@@ -70,13 +99,10 @@ async function createConnection(req, res, next) {
         }
 
         await Connection.create(connectionData);
-
         // create pool data and upload to database
         await createPool(token.access_token, connectionData.connectionName);
-
         // create desktop
-        // const desktops = await wsGet()
-
+        await createDesktop(token.access_token, connectionData.connectionName);
         return
 }
 

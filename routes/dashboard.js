@@ -3,6 +3,7 @@ const router = express.Router();
 const fetch = require('node-fetch');
 const Connection = require('../models/Connection');
 const Pool = require('../models/Pool');
+const Desktop = require('../models/Desktop');
 const bodyParser = require('body-parser');
 const getToken = require('../middleware/get-token');
 
@@ -25,9 +26,10 @@ async function wsGet(url){
 router.get('/', async (req, res, next) => {
 
     // pull connection information from db
-    const wsConnection = await Connection.findOne({connectionName: req.query.dashboard});
+    
     const pools = await Pool.find({connectionName: req.query.dashboard});
-    res.render('dashboard', {desktopPools: pools});
+    const desktops = await Desktop.find({connectionName: req.query.dashboard});
+    res.render('dashboard', {desktopPools: pools, desktops: desktops});
     
     }
 );
