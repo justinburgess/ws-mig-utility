@@ -1,43 +1,36 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema();
 
-
-var PoolSchema = new mongoose.Schema({
+var DesktopSchema = new mongoose.Schema({
     connectionName: {
         type: String,
-        unique: true,
         required: true,
         trim: true,
     },
-    poolName: {
+    name: {
         type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+    },
+    status: {
+        type: String,
+    },
+    id: {
+        type: String,
+        unique: true,
         required: true,
     },
     poolId: {
         type: String,
         required: true,
     },
-    cloud: {
-        type: String,
-        required: true,
-    },
-    template: {
-        type: String,
-        required: true,
-    },
-    status: {
-        type: String,
-        required: true,
-    },
-    vmType: {
-        type: String,
-        required: true,
-    },
-    poolType: {
+    poolName: {
         type: String,
         required: true,
     },
 });
 
-var Pool = mongoose.model('Pool', PoolSchema);
-module.exports = Pool;
+var Desktop = mongoose.model('Desktop', DesktopSchema);
+module.exports = Desktop;

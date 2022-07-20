@@ -4,9 +4,8 @@ const Connection = require('../models/Connection');
 
 
 router.get('/', async (req, res, next) => {
-    // read available connections
+    // read and render all available connections
     const connections = await Connection.find();
-
     res.render('main', {connections});
 });
 

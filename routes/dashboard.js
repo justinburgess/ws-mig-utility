@@ -9,59 +9,26 @@ const getToken = require('../middleware/get-token');
 
 // helper functions
 
-// pulls desktop pool information from Workspot API
-async function getWorkspotPools(token) {
-    const url = `https://api.workspot.com/v1.0/pools?access_token=${token}`
-    const desktopPools = await fetch(url)
-           .then(res => res.json())
-           .catch(error => console.log('Looks like there was a problem!', error))
-    return desktopPools;
-}
-
-// store pool id and name info
-async function createPool(pools, connection) {
-        const desktopPools = pools.desktopPools;
-    for (let i = 0; i < desktopPools.length; i++) {
-        if (!(await Pool.exists({poolId: desktopPools[i].id}))) {
-            await Pool.create({
-                connectionName: connection,
-                poolName: desktopPools[i].name,
-                poolId: desktopPools[i].id,
-                });
-            return
-        }
-    }
-}
-
 // pull available desktops based on poolId
-async function getDesktops(poolId, token){
+async function wsGet(url){
     // fetch desktops with poolId
-    const desktops = await fetch(`https://api.workspot.com/v1.0/pools/${poolId}/desktops?access_token=${token}`)
-                            .then(res => res.json());
-    // return desktops;
-    return desktops;
+    const get = await fetch(url)
+                .then(res => res.json())
+                .catch(error => console.log('Looks like there was a problem!', error))
+    return get;
 }
 
 
 // routes
 
-
 // workspot dashboard screen
 router.get('/', async (req, res, next) => {
+
     // pull connection information from db
     const wsConnection = await Connection.findOne({connectionName: req.query.dashboard});
-
-    // check token expiration, refresh token if so
-    if (Date.now() > wsConnection.apiTokenRefreshTime) {
-        var token = await getToken(wsConnection.apiAdmin, wsConnection.apiAdminPassword, wsConnection.wsClientId, wsConnection.wsClientSecret);
-        var key = token.access_token;
-        await Connection.updateOne({apiAccessToken: wsConnection.apiAccessToken},{$set: {apiAccessToken: key, apiTokenRefreshTime: new Date(Date.now() + 3600000)}});
-        }
-
-    // get available desktop pools and render page    
-    const pools = await getWorkspotPools(key ? key : wsConnection.apiAccessToken);
-    await createPool(pools, req.query.dashboard);
-    res.render('dashboard', {desktopPools: pools.desktopPools});
+    const pools = await Pool.find({connectionName: req.query.dashboard});
+    res.render('dashboard', {desktopPools: pools});
+    
     }
 );
 
@@ -72,7 +39,7 @@ router.post('/desktops', async(req, res, next) => {
     // lookup api token
     const connection = await Connection.findOne({connectionName: pool.connectionName})
     // use fetch api to get desktops with poolId
-    const desktops = await getDesktops(pool.poolId, connection.apiAccessToken);
+    const desktops = await wsGet(`https://api.workspot.com/v1.0/pools/${pool.poolId}/desktops?access_token=${connection.apiAccessToken}`);
     // populate desktop info into pug locals and render
     // res.render('dashboard', {desktops: desktops.desktops});
 });
